@@ -1,45 +1,86 @@
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
-public class minLengthOfPermutations {
+public class minLengthOfPermutations {  
+
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int t = sc.nextInt();
+        Scanner scanner = new Scanner(System.in);
 
-        while(t-- > 0){
-            int N = sc.nextInt();
-            int A[] = new int[N];
-            int B[] = new int[N];
+        // Input the number of test cases
+        int T = scanner.nextInt();
 
-            for(int i = 0; i < N; i++){
-                A[i] = sc.nextInt();
-            } // end of for loop
+        for (int t = 0; t < T; t++) {
+            // Input the size of the arrays
+            int N = scanner.nextInt();
 
-            for (int i = 0; i < N; i++){
-                B[i] = sc.nextInt();
-            } // end of for loop
+            // Input the elements of the first array
+            int[] A = new int[N];
+            for (int i = 0; i < N; i++) {
+                A[i] = scanner.nextInt();
+            }
 
-            int result = minSubarray(N, A, B);
-            System.out.println(result);
-        } // end of while loop
-    } // end of main method
+            // Input the elements of the second array
+            int[] B = new int[N];
+            for (int i = 0; i < N; i++) {
+                B[i] = scanner.nextInt();
+            }
 
-    static int minSubarray(int N, int[] A, int[] B){
+            // Find the minimum subarray length
+            int minSubarrayLength = findMinSubarrayLength(N, A, B);
+            System.out.println(minSubarrayLength);
+        }
 
-        Arrays.sort(A);
-        Arrays.sort(B);
-
-        int i = 0;
-        while(i < N && A[i] == B[i]){
-            i++;
-        } // end of while loop
-
-        int j = N - 1;
-        while(j >= 0 && A[j] == B[j]){
-            j--;
-        } // end of while loop
-
-        int min = (i <= j) ? (j - i + 1) : 0;
-
-        return min;
+        scanner.close();
     }
-} // end of class
+
+    // Function to find the minimum subarray length to make arrays A and B permutations of each other
+    private static int findMinSubarrayLength(int N, int[] A, int[] B) {
+        Map<Integer, Integer> countMap = new HashMap<>();
+
+        // Count occurrences of elements in array A
+        for (int num : A) {
+            countMap.put(num, countMap.getOrDefault(num, 0) + 1);
+        }
+
+        // Initialize variables
+        int start = 0, end = 0, diffCount = 0, minSubarrayLength = Integer.MAX_VALUE;
+
+        // Iterate through array B
+        while (end < N) {
+            int currentNum = B[end];
+
+            // Update countMap and diffCount based on the current element in array B
+            if (countMap.containsKey(currentNum)) {
+                countMap.put(currentNum, countMap.get(currentNum) - 1);
+                if (countMap.get(currentNum) == 0) {
+                    diffCount++;
+                }
+            }
+
+            // Move the start pointer until the subarray no longer satisfies the condition
+            while (diffCount > 0) {
+                int startNum = B[start];
+                if (countMap.containsKey(startNum)) {
+                    if (countMap.get(startNum) == 0) {
+                        diffCount--;
+                    }
+                    countMap.put(startNum, countMap.get(startNum) + 1);
+                }
+                start++;
+            }
+
+            // Update the minimum subarray length
+            if (end - start + 1 == N) {
+                return 0; // Full array is a permutation, no need to sort
+            } else if (end - start + 1 < minSubarrayLength) {
+                minSubarrayLength = end - start + 1;
+            }
+
+            end++;
+        }
+
+        return minSubarrayLength;
+    }
+}
