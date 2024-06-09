@@ -1,52 +1,43 @@
-public class binarySearch {
-    public static void main(String[] args) {
+import java.util.Scanner;
 
-        int arr[] = {1,3,4,5,6,7,8,9,10};
-        int value = 4;
-        int size = arr.length;
+class binarySearch {
+  int binarySearch(int array[], int element, int low, int high) {
 
-        int posn = binarySearch(arr, 0, size-1, value);
+    while (low <= high) {
 
-        if(posn == -1){
-            System.out.println("element not found");
-        }else{
-            System.out.println("Element " + value + " found at " + posn);
-        }
+      int mid = low + (high - low) / 2;
+
+      if (array[mid] == element)
+        return mid;
+
+        if (array[mid] < element)
+        low = mid + 1;
+
+        else
+        high = mid - 1;
     }
 
-    public static int binarySearch(int[] arr, int low, int high, int value) {
+    return -1;
+  }
 
-//      RECURSIVE APPROACH
+  public static void main(String args[]) {
 
-//        if (high >= low) {
-//            int mid = (high - low) / 2 + low;
+    Main obj = new Main();
 
-//            if (arr[mid] == value)
-//                return mid + 1;
+    int[] array = { 3, 4, 5, 6, 7, 8, 9 };
+    int n = array.length;
 
-//            if (arr[mid] > value)
-//                return binarySearch(arr, 0, mid - 1, value);
+    Scanner input = new Scanner(System.in);
 
-//            else
-//                return binarySearch(arr, mid + 1, high, value);
-//        } else
-//            return -1;
+    System.out.println("Enter element to be searched:");
 
-//        ITERATIVE APPROACH
+    int element = input.nextInt();
+    input.close();
 
-        while(low <= high){
-
-            int mid = (high-low)/2 + low;
-
-            if(arr[mid] == value)
-                return mid;
-
-            if(arr[mid] > value)
-                high = mid-1;
-
-            else
-                low = mid+1;
-        }
-        return -1;
-    }
+    int result = obj.binarySearch(array, element, 0, n - 1);
+    if (result == -1)
+      System.out.println("Not found");
+    else
+      System.out.println("Element found at index " + result);
+  }
 }
